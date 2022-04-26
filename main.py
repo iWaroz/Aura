@@ -10,5 +10,3 @@ bot.run(
 	os.getenv('discord_token'),
 	bot=aurora
 )
-
-# Test
