@@ -12,12 +12,17 @@ async def exp_giver(msg):
 	
 	if not msg.channel in channel_xps:
 		return
+
+	msg.author.exp += 1
+	print(msg.author.exp)
 	
 	xp_reward = random.randint(
 		*channel_xps[msg.channel]
   )
-	print(xp_reward)
 
+	multiplier = msg.author.xp_boost.multiplier
+	msg.author.exp += int(xp_reward * multiplier)
+	print(msg.author.exp)
 	
 	"""
     with aura.member(msg.author) as user:

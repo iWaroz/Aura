@@ -2,36 +2,20 @@ import aura
 
 lootboxes = aura.db.property('lootboxes', [])
 
-
 async def lootboxes_new(msg):
-	with msg.author as user:
-		with msg.guild as guild:
-			for lbx in guild.lootboxes:
-				if aura.roll_percent(lbx["chance"] * user.magic_find.multiplier * 0.420):
-					lbx["amount"] -= 1
-					await message.reply(
-						'', 
-						embed=discord.Embed(
-							description=f'**Congratulations!** You found a **{lbx["title"]}**! (+{user.magic_find.value}% Magic Find)\n*This prize is valued at {lbx["value"]:,} coins and there are {lbx["amount"]} still left to be obtained*', 
-							color=bot.color
-						)
-					)
-					await aura.channel.unclaimed_prizes.send(
-						'',
-						embed=discord.Embed(
-							description=f"{user.mention} won a **{lbx['title']}**.\n- IGN: {user.username}",
-							color=0xe86059
-						),
-						components=[
-							aura.component.row(
-								aura.component.button(
-									style="red",
-									label="Mark as Claimed",
-									custom_id="lbxclaimed"
-								)
-							)
-						]
-					)
+	with msg.author as user, msg.guild as guild:
+		for lbx in guild.lootboxes:
+			if not aura.roll_percent(lbx["chance"] * user.magic_find.multiplier):
+				continue
+				
+			lbx["amount"] -= 1
+			await message.reply(
+				aura.embed(description=f'**Congratulations!** You found a **{lbx["title"]}**! (+{user.magic_find.value}% Magic Find)\n*This prize is valued at {lbx["value"]:,} coins and there are {lbx["amount"]} still left to be obtained*', color=bot.color)
+			)
+			await aura.channel.unclaimed_prizes.send(
+				embed=aura.embed(description=f"{user.mention} won a **{lbx['title']}**.\n- IGN: {user.username}",color=0xe86059),
+				components=[aura.component.row(aura.component.button(style="red",label="Mark as Claimed",custom_id="lbxclaimed"))]
+			)
 
 
 async def lootboxes_old(message):
